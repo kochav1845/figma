@@ -18,7 +18,8 @@
 import { useState } from "react";
 
 // react-router-dom components
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "context/AuthContext";
 
 // @mui material components
 import Switch from "@mui/material/Switch";
@@ -46,8 +47,29 @@ import bgImage from "assets/images/background-cover-auth-signin.png";
 
 function SignIn() {
   const [rememberMe, setRememberMe] = useState(true);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const { signIn } = useAuth();
+  const navigate = useNavigate();
 
   const handleSetRememberMe = () => setRememberMe(!rememberMe);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError("");
+    setLoading(true);
+
+    const { error } = await signIn(email, password);
+
+    if (error) {
+      setError(error.message);
+      setLoading(false);
+    } else {
+      navigate("/dashboards/default");
+    }
+  };
 
   return (
     <CoverLayout
@@ -58,7 +80,14 @@ function SignIn() {
       premotto={"INSPIRED BY THE FUTURE:"}
       motto={"THE VISION UI DASHBOARD"}
     >
-      <VuiBox component="form" role="form">
+      <VuiBox component="form" role="form" onSubmit={handleSubmit}>
+        {error && (
+          <VuiBox mb={2}>
+            <VuiTypography variant="caption" color="error" fontWeight="medium">
+              {error}
+            </VuiTypography>
+          </VuiBox>
+        )}
         <VuiBox mb={2}>
           <VuiBox mb={1} ml={0.5}>
             <VuiTypography component="label" variant="button" color="white" fontWeight="medium">
@@ -78,6 +107,9 @@ function SignIn() {
             <VuiInput
               type="email"
               placeholder="Your email..."
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
               sx={({ typography: { size } }) => ({
                 fontSize: size.sm,
               })}
@@ -103,6 +135,9 @@ function SignIn() {
             <VuiInput
               type="password"
               placeholder="Your password..."
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
               sx={({ typography: { size } }) => ({
                 fontSize: size.sm,
               })}
@@ -122,8 +157,8 @@ function SignIn() {
           </VuiTypography>
         </VuiBox>
         <VuiBox mt={4} mb={1}>
-          <VuiButton color="info" fullWidth>
-            SIGN IN
+          <VuiButton color="info" fullWidth type="submit" disabled={loading}>
+            {loading ? "SIGNING IN..." : "SIGN IN"}
           </VuiButton>
         </VuiBox>
         <VuiBox mt={3} textAlign="center">

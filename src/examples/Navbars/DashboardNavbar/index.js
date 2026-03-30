@@ -18,7 +18,8 @@
 import { useState, useEffect } from "react";
 
 // react-router components
-import { useLocation, Link } from "react-router-dom";
+import { useLocation, Link, useNavigate } from "react-router-dom";
+import { useAuth } from "context/AuthContext";
 
 // prop-types is a library for typechecking of props.
 import PropTypes from "prop-types";
@@ -67,6 +68,13 @@ function DashboardNavbar({ absolute, light, isMini }) {
   const { miniSidenav, transparentNavbar, fixedNavbar, openConfigurator } = controller;
   const [openMenu, setOpenMenu] = useState(false);
   const route = useLocation().pathname.split("/").slice(1);
+  const { user, signOut } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    await signOut();
+    navigate("/authentication/sign-in/cover");
+  };
 
   useEffect(() => {
     // Setting the navbar type
@@ -169,20 +177,35 @@ function DashboardNavbar({ absolute, light, isMini }) {
               />
             </VuiBox>
             <VuiBox color={light ? "white" : "inherit"}>
-              <Link to="/authentication/sign-in/basic">
-                <IconButton sx={navbarIconButton} size="small">
+              {user ? (
+                <IconButton sx={navbarIconButton} size="small" onClick={handleLogout}>
                   <Icon
                     sx={({ palette: { dark, white } }) => ({
                       color: white.main,
                     })}
                   >
-                    account_circle
+                    logout
                   </Icon>
                   <VuiTypography variant="button" fontWeight="medium" color="white">
-                    Sign in
+                    Logout
                   </VuiTypography>
                 </IconButton>
-              </Link>
+              ) : (
+                <Link to="/authentication/sign-in/cover">
+                  <IconButton sx={navbarIconButton} size="small">
+                    <Icon
+                      sx={({ palette: { dark, white } }) => ({
+                        color: white.main,
+                      })}
+                    >
+                      account_circle
+                    </Icon>
+                    <VuiTypography variant="button" fontWeight="medium" color="white">
+                      Sign in
+                    </VuiTypography>
+                  </IconButton>
+                </Link>
+              )}
               <IconButton
                 size="small"
                 color="white"

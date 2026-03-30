@@ -18,10 +18,10 @@
 import React from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
-import App from "App"; // Ensure correct relative path if App is in the same directory
+import App from "App";
 
-// Vision UI Context Provider
-import { VisionUIControllerProvider } from "context"; // Ensure correct relative path
+import { VisionUIControllerProvider } from "context";
+import { AuthProvider } from "context/AuthContext";
 
 const container = document.getElementById("root");
 const root = createRoot(container);
@@ -29,7 +29,9 @@ const root = createRoot(container);
 root.render(
   <BrowserRouter>
     <VisionUIControllerProvider>
-      <App />
+      <AuthProvider>
+        <App />
+      </AuthProvider>
     </VisionUIControllerProvider>
   </BrowserRouter>
 );

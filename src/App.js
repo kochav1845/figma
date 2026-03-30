@@ -31,6 +31,7 @@ import VuiBox from 'components/VuiBox';
 // Vision UI Dashboard PRO React example components
 import Sidenav from 'examples/Sidenav';
 import Configurator from 'examples/Configurator';
+import ProtectedRoute from 'components/ProtectedRoute';
 
 // Vision UI Dashboard PRO React themes
 import theme from 'assets/theme';
@@ -107,7 +108,12 @@ export default function App() {
     return routes.map((route, key) => {
       if (route.layout === '/admin') {
         return (
-          <Route path={`${route.path}`} element={route.component} key={key} />
+          <Route
+            path={`${route.path}`}
+            element={<ProtectedRoute>{route.component}</ProtectedRoute>}
+            }
+            key={key}
+          />
         );
       }
       if (route.collapse) {
